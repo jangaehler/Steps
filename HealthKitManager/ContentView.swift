@@ -161,3 +161,4 @@ struct SourceListView: View {
 enum TimePeriod {
     case today, thisYear
 }
+
