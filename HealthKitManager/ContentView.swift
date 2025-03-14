@@ -3,12 +3,11 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var healthKitManager = HealthKitManager()
     @State private var selectedPeriod: TimePeriod = .today
-    
+
     let fieldBackgroundColor: Color = Color(.systemGray6).opacity(0.8)
 
     var body: some View {
-        
-        TabView    {
+        TabView {
             VStack(spacing: 20) {
                 Text("Health Data")
                     .font(.largeTitle)
@@ -85,26 +84,25 @@ struct ContentView: View {
 
             // 📊 Fortschrittsansicht (Elbe-Radweg)
             ElbeProgressVerticalChartView(
-                yearlyDistance: $healthKitManager.yearlyDistance
+                yearlyDistance: $healthKitManager.yearlyDistance,
+                yearlyCyclingDistance: $healthKitManager.yearlyCyclingDistance
             )
             .padding()
         }
         .tabViewStyle(.page)
-            .background(
-                Image("backgroundImage2")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-            )
+        .background(
+            Image("backgroundImage2")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+        )
     }
-                
-                
 }
 
 struct HealthDataView: View {
     let title: String
     let value: String
-    
+
     var body: some View {
         HStack {
             Text(title)
@@ -125,7 +123,7 @@ struct HealthDataView: View {
 struct SourceListView: View {
     let title: String
     let sources: [String: Double]
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             Text(title).font(.headline)
@@ -147,7 +145,7 @@ struct SourceListView: View {
                 .fill(Color(.systemGray6).opacity(0.8))
         )
     }
-    
+
     private func quantityFormat(for value: Double) -> String {
         return title
             .contains(NSLocalizedString("step", comment: "")) ? "\(Int(value))" : String(

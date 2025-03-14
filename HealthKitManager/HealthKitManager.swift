@@ -5,9 +5,9 @@
 //  Created by Jan Gähler on 22.02.25.
 //
 
+import Combine
 import Foundation
 import HealthKit
-import Combine
 
 class HealthKitManager: ObservableObject {
     private let healthStore = HKHealthStore()
@@ -20,21 +20,37 @@ class HealthKitManager: ObservableObject {
     @Published var distanceSources: [String: Double] = [:]
     @Published var yearlyStepSources: [String: Double] = [:]
     @Published var yearlyDistanceSources: [String: Double] = [:]
-    
+    @Published var dailyCyclingDistance: Double = 0.0
+    @Published var yearlyCyclingDistance: Double = 0.0
+    @Published var dailyCyclingTime: Double = 0.0
+    @Published var yearlyCyclingTime: Double = 0.0
+    @Published var dailyCyclingSources: [String: Double] = [:]
+    @Published var yearlyCyclingSources: [String: Double] = [:]
+
     private let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
     private let distanceType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
-    
+    private let cyclingDistanceType = HKQuantityType.quantityType(forIdentifier: .distanceCycling)!
+
     init() {
         requestAuthorization()
     }
     
     func requestAuthorization() {
-        let typesToRead: Set = [stepType, distanceType]
+        let typesToRead: Set = [
+            stepType,
+            distanceType,
+            cyclingDistanceType
+        ]
+
         healthStore.requestAuthorization(toShare: nil, read: typesToRead) { success, error in
             if success {
                 self.fetchDailyData()
                 self.fetchYearlyData()
                 self.observeStepChanges()
+                self.fetchDailyCyclingData()
+                self.fetchYearlyCyclingData()
+                self.observeCyclingChanges()
+
             } else {
                 print("HealthKit authorization failed: \(error?.localizedDescription ?? "Unknown error")")
             }
@@ -137,21 +153,21 @@ class HealthKitManager: ObservableObject {
                 return
             }
             
-            var sourceData: [String: Double] = [:]  // Ensuring Double for consistency
+            var sourceData: [String: Double] = [:] // Ensuring Double for consistency
             let dispatchGroup = DispatchGroup()
             
             for source in sources {
                 dispatchGroup.enter()
                 self.fetchHealthDataFromSource(for: quantityType, source: source, startDate: startDate) { value in
                     if value > 0 {
-                        sourceData[source.name] = value  // Ensuring Double storage
+                        sourceData[source.name] = value // Ensuring Double storage
                     }
                     dispatchGroup.leave()
                 }
             }
             
             dispatchGroup.notify(queue: .main) {
-                print("Final \(quantityType.identifier) Sources (\(timePeriod)): \(sourceData)")  // Debugging output
+                print("Final \(quantityType.identifier) Sources (\(timePeriod)): \(sourceData)") // Debugging output
                 print("Datatype: \(type(of: sourceData))") // Type checking
                 completion(sourceData)
             }
@@ -179,6 +195,54 @@ class HealthKitManager: ObservableObject {
         healthStore.execute(query)
     }
     
+    // Neue Methoden für Fahrraddaten
+    private func fetchDailyCyclingData() {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+           
+        // Fahrradstrecke
+        fetchHealthData(for: cyclingDistanceType, startDate: startOfDay) { distance in
+            DispatchQueue.main.async {
+                self.dailyCyclingDistance = distance
+            }
+        }
+           
+        // Quellen für Fahrraddaten
+        fetchDataSources(for: cyclingDistanceType, timePeriod: .today) { sources in
+            DispatchQueue.main.async {
+                self.dailyCyclingSources = sources
+            }
+        }
+    }
+       
+    private func fetchYearlyCyclingData() {
+        let calendar = Calendar.current
+        let startOfYear = calendar.date(from: calendar.dateComponents([.year], from: Date()))!
+           
+        // Jährliche Fahrradstrecke
+        fetchHealthData(for: cyclingDistanceType, startDate: startOfYear) { distance in
+            DispatchQueue.main.async {
+                self.yearlyCyclingDistance = distance
+            }
+        }
+           
+        // Quellen für jährliche Fahrraddaten
+        fetchDataSources(for: cyclingDistanceType, timePeriod: .thisYear) { sources in
+            DispatchQueue.main.async {
+                self.yearlyCyclingSources = sources
+            }
+        }
+    }
+       
+    private func observeCyclingChanges() {
+        let cyclingQuery = HKObserverQuery(sampleType: cyclingDistanceType, predicate: nil) { _, _, _ in
+            self.fetchDailyCyclingData()
+            self.fetchYearlyCyclingData()
+        }
+           
+        healthStore.execute(cyclingQuery)
+    }
+
     private func observeStepChanges() {
         let query = HKObserverQuery(sampleType: stepType, predicate: nil) { _, _, _ in
             self.fetchDailyData()
