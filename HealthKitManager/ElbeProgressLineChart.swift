@@ -82,8 +82,7 @@ struct ElbeProgressVerticalChartView: View {
                         Spacer()
                         Text("Dein Fortschritt entlang der Elbe")
                         Spacer()
-                    }
-                    .font(.headline)
+                    }.font(.headline)
                 ) {
                     Chart {
                         getCompletePath()
