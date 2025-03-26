@@ -27,7 +27,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		24546D182D8994C600D8BEB9 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		24546D032D8994C400D8BEB9 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		24546D052D8994C400D8BEB9 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		24546D1D2D8995F900D8BEB9 /* HealthManagerWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HealthManagerWidgetExtension.entitlements; sourceTree = "<group>"; };
 		24B1DEE32D6A8BFC0099311E /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		24DC86022D6A69D6000B391D /* HealthKitManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HealthKitManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		24DC86122D6A69DA000B391D /* HealthKitManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HealthKitManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,13 +93,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		24546D022D8994C400D8BEB9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				24546D032D8994C400D8BEB9 /* WidgetKit.framework */,
+				24546D052D8994C400D8BEB9 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		24DC85F92D6A69D5000B391D = {
 			isa = PBXGroup;
 			children = (
+				24546D1D2D8995F900D8BEB9 /* HealthManagerWidgetExtension.entitlements */,
 				24B1DEE32D6A8BFC0099311E /* Localizable.xcstrings */,
 				24DC86042D6A69D6000B391D /* HealthKitManager */,
 				24DC86152D6A69DA000B391D /* HealthKitManagerTests */,
 				24DC861F2D6A69DA000B391D /* HealthKitManagerUITests */,
+				24546D022D8994C400D8BEB9 /* Frameworks */,
 				24DC86032D6A69D6000B391D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,6 +135,7 @@
 				24DC85FE2D6A69D6000B391D /* Sources */,
 				24DC85FF2D6A69D6000B391D /* Frameworks */,
 				24DC86002D6A69D6000B391D /* Resources */,
+				24546D182D8994C600D8BEB9 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);

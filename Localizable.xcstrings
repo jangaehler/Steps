@@ -1,7 +1,10 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%lld km von 1.300 km" : {
+    "%@ km Fahrrad" : {
+
+    },
+    "%@ km von 1.300 km" : {
 
     },
     "Dein Fortschritt entlang der Elbe" : {
@@ -40,9 +43,6 @@
       }
     },
     "Distanz" : {
-
-    },
-    "Du bist hier!" : {
 
     },
     "Health Data" : {
