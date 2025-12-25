@@ -4,8 +4,6 @@ struct ContentView: View {
     @StateObject private var healthKitManager = HealthKitManager()
     @State private var selectedPeriod: TimePeriod = .today
 
-    let fieldBackgroundColor: Color = Color(.systemGray6).opacity(0.8)
-
     var body: some View {
         TabView {
             VStack(spacing: 20) {
@@ -26,7 +24,7 @@ struct ContentView: View {
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(fieldBackgroundColor)
+                        .fill(Color.fieldBackground)
                 )
                 .foregroundColor(.white)
 
@@ -57,7 +55,10 @@ struct ContentView: View {
                 } else {
                     HealthDataView(
                         title: NSLocalizedString("steps", comment: ""),
-                        value: "\(healthKitManager.yearlySteps)"
+                        value: String(
+                            format: "%d",
+                            healthKitManager.yearlySteps
+                        )
                     )
                     HealthDataView(
                         title: NSLocalizedString("distance", comment: ""),
@@ -82,12 +83,23 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top) // ✅ Fixes VStack to the top
             .padding()
 
-            // 📊 Fortschrittsansicht (Elbe-Radweg)
-            ElbeProgressVerticalChartView(
-                yearlyDistance: $healthKitManager.yearlyDistance,
-                yearlyCyclingDistance: $healthKitManager.yearlyCyclingDistance
+            // 📊 Fortschrittsansicht (Rhein-Radweg 2026)
+            RheinProgressVerticalChartView(
+                yearlyDistance: $healthKitManager.year2026Distance,
+                yearlyCyclingDistance: $healthKitManager.year2026CyclingDistance
             )
             .padding()
+
+            // 📊 Fortschrittsansicht (Elbe-Radweg 2025)
+            ElbeProgressVerticalChartView(
+                yearlyDistance: $healthKitManager.year2025Distance,
+                yearlyCyclingDistance: $healthKitManager.year2025CyclingDistance
+            )
+            .padding()
+            
+            HabitCalendarView().tabItem {
+                Label("Ziele", systemImage: "calendar")
+            }
         }
         .tabViewStyle(.page)
         .background(
@@ -115,7 +127,7 @@ struct HealthDataView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6).opacity(0.8))
+                .fill(Color.fieldBackground)
         )
     }
 }
@@ -142,7 +154,7 @@ struct SourceListView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.systemGray6).opacity(0.8))
+                .fill(Color.fieldBackground)
         )
     }
 
@@ -158,5 +170,12 @@ struct SourceListView: View {
 // Enum for Time Period Selection
 enum TimePeriod {
     case today, thisYear
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+    
 }
 

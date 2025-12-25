@@ -4,10 +4,16 @@
     "%@ km Fahrrad" : {
 
     },
-    "%@ km von 1.300 km" : {
+    "%@ km von 1.230 km" : {
 
     },
-    "Dein Fortschritt entlang der Elbe" : {
+    "%@ km von 1.500 km" : {
+
+    },
+    "Dein Fortschritt am Rhein 2026" : {
+
+    },
+    "Dein Fortschritt an der Elbe 2025" : {
 
     },
     "distance" : {
@@ -180,6 +186,9 @@
           }
         }
       }
+    },
+    "Ziele" : {
+
     }
   },
   "version" : "1.0"
