@@ -1,37 +1,32 @@
 import Charts
 import SwiftUI
 
-struct ElbeProgressVerticalChartView: View {
+struct RheinProgressVerticalChartView: View {
     @Binding var yearlyDistance: Double
     @Binding var yearlyCyclingDistance: Double
     
-    let theme = ChartTheme.elbe
+    let theme = ChartTheme.rhein
 
     let milestones: [(distance: Double, location: String)] = [
-        (0, "Elbquelle"),
-        (30, "Vrchlabi"),
-        (103, "Hradec Králové"),
-        (127, "Pardubice"),
-        (263, "Prag"),
-        (313, "Melník"),
-        (385, "Ústí nad Labem"),
-        (411, "Děčín"),
-        (434, "Bad Schandau"),
-        (478, "Dresden"),
-        (504, "Meißen"),
-        (646, "Lutherstadt Wittenberg"),
-        (683, "Dessau"),
-        (761, "Magdeburg"),
-        (843, "Stendal"),
-        (910, "Wittenberge"),
-        (992, "Hitzacker"),
-        (1046, "Lauenburg"),
-        (1105, "Hamburg"),
-        (1150, "Stade"),
-        (1181, "Wischhafen/Glückstadt"),
-        (1239, "Cuxhaven (Bahnhof)"),
-        (1300, "Ziel"),
-        (1500, "Nordsee")
+        (0, "Rheinquelle (Tomasee)"),
+        (120, "Chur (Bündner Herrschaft)"),
+        (200, "Bodensee (Konstanz)"),
+        (260, "Schaffhausen (Rheinfall)"),
+        (360, "Basel"),
+        (430, "Breisach am Rhein (Kaiserstuhl)"),
+        (510, "Straßburg"),
+        (690, "Worms"),
+        (730, "Mainz (Rheinhessen)"),
+        (760, "Rüdesheim (Rheingau)"),
+        (770, "Bingen"),
+        (830, "Lorelei (St. Goarshausen)"),
+        (870, "Koblenz (Deutsches Eck)"),
+        (950, "Bonn"),
+        (980, "Köln"),
+        (1020, "Düsseldorf"),
+        (1120, "Arnhem"),
+        (1190, "Rotterdam"),
+        (1230, "Hoek van Holland (Nordsee)")
     ]
 
     let yAxisValues: [Int] = Array(stride(from: 0, through: 1500, by: 100))
@@ -102,7 +97,7 @@ struct ElbeProgressVerticalChartView: View {
                 GroupBox(
                     label: HStack {
                         Spacer()
-                        Text("Dein Fortschritt an der Elbe 2025")
+                        Text("Dein Fortschritt am Rhein 2026")
                         Spacer()
                     }.font(.headline)
                 ) {
@@ -138,26 +133,26 @@ struct ElbeProgressVerticalChartView: View {
                             AxisValueLabel().foregroundStyle(theme.axisColor)
                         }
                     }
-                    .chartYScale(domain: 0 ... 1550)
+                    .chartYScale(domain: 0 ... 1500)
                     .frame(height: 600)
                     .padding(20)
 
                     VStack {
-                        Text("\(Double(yearlyDistance / 1000).formatted(.number.locale(Locale(identifier: "de_DE")).precision(.fractionLength(2)))) km von 1.500 km")
+                        Text("\(Double(yearlyDistance / 1000).formatted(.number.locale(Locale(identifier: "de_DE")).precision(.fractionLength(2)))) km von 1.230 km")
                             .font(.headline)
 
                         Text("\(Double(yearlyCyclingDistance / 1000).formatted(.number.locale(Locale(identifier: "de_DE")).precision(.fractionLength(2)))) km Fahrrad")
                             .font(.subheadline)
                     }
                 }
-                .groupBoxStyle(YellowGroupBoxStyle())
+                .groupBoxStyle(BlueGroupBoxStyle())
             }
             .padding(5)
         }
     }
 }
 
-struct YellowGroupBoxStyle: GroupBoxStyle {
+struct BlueGroupBoxStyle: GroupBoxStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.content
             .padding(30)

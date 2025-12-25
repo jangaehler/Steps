@@ -26,6 +26,12 @@ class HealthKitManager: ObservableObject {
     @Published var yearlyCyclingTime: Double = 0.0
     @Published var dailyCyclingSources: [String: Double] = [:]
     @Published var yearlyCyclingSources: [String: Double] = [:]
+    
+    // Year-specific data for 2025 (Elbe) and 2026 (Rhein)
+    @Published var year2025Distance: Double = 0.0
+    @Published var year2025CyclingDistance: Double = 0.0
+    @Published var year2026Distance: Double = 0.0
+    @Published var year2026CyclingDistance: Double = 0.0
 
     private let stepType = HKQuantityType.quantityType(forIdentifier: .stepCount)!
     private let distanceType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
@@ -50,6 +56,8 @@ class HealthKitManager: ObservableObject {
                 self.fetchDailyCyclingData()
                 self.fetchYearlyCyclingData()
                 self.observeCyclingChanges()
+                self.fetchYear2025Data()
+                self.fetchYear2026Data()
 
             } else {
                 print("HealthKit authorization failed: \(error?.localizedDescription ?? "Unknown error")")
@@ -255,5 +263,83 @@ class HealthKitManager: ObservableObject {
     enum TimePeriod {
         case today
         case thisYear
+    }
+    
+    // Fetch data for year 2025 (Elbe)
+    private func fetchYear2025Data() {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = 2025
+        components.month = 1
+        components.day = 1
+        
+        guard let startOf2025 = calendar.date(from: components) else { return }
+        
+        components.year = 2026
+        guard let endOf2025 = calendar.date(from: components) else { return }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startOf2025, end: endOf2025, options: .strictStartDate)
+        
+        // Fetch walking/running distance for 2025
+        let distanceQuery = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, _ in
+            guard let result = result, let sum = result.sumQuantity() else {
+                DispatchQueue.main.async { self.year2025Distance = 0 }
+                return
+            }
+            let value = sum.doubleValue(for: HKUnit.meter())
+            DispatchQueue.main.async { self.year2025Distance = value }
+        }
+        
+        // Fetch cycling distance for 2025
+        let cyclingQuery = HKStatisticsQuery(quantityType: cyclingDistanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, _ in
+            guard let result = result, let sum = result.sumQuantity() else {
+                DispatchQueue.main.async { self.year2025CyclingDistance = 0 }
+                return
+            }
+            let value = sum.doubleValue(for: HKUnit.meter())
+            DispatchQueue.main.async { self.year2025CyclingDistance = value }
+        }
+        
+        healthStore.execute(distanceQuery)
+        healthStore.execute(cyclingQuery)
+    }
+    
+    // Fetch data for year 2026 (Rhein)
+    private func fetchYear2026Data() {
+        let calendar = Calendar.current
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 1
+        components.day = 1
+        
+        guard let startOf2026 = calendar.date(from: components) else { return }
+        
+        components.year = 2027
+        guard let endOf2026 = calendar.date(from: components) else { return }
+        
+        let predicate = HKQuery.predicateForSamples(withStart: startOf2026, end: endOf2026, options: .strictStartDate)
+        
+        // Fetch walking/running distance for 2026
+        let distanceQuery = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, _ in
+            guard let result = result, let sum = result.sumQuantity() else {
+                DispatchQueue.main.async { self.year2026Distance = 0 }
+                return
+            }
+            let value = sum.doubleValue(for: HKUnit.meter())
+            DispatchQueue.main.async { self.year2026Distance = value }
+        }
+        
+        // Fetch cycling distance for 2026
+        let cyclingQuery = HKStatisticsQuery(quantityType: cyclingDistanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, _ in
+            guard let result = result, let sum = result.sumQuantity() else {
+                DispatchQueue.main.async { self.year2026CyclingDistance = 0 }
+                return
+            }
+            let value = sum.doubleValue(for: HKUnit.meter())
+            DispatchQueue.main.async { self.year2026CyclingDistance = value }
+        }
+        
+        healthStore.execute(distanceQuery)
+        healthStore.execute(cyclingQuery)
     }
 }
